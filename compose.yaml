@@ -1,0 +1,7 @@
+﻿services:
+  catalogproject:
+    image: catalogproject
+    build:
+      context: .
+      dockerfile: CatalogProject/Dockerfile
+
