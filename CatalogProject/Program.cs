@@ -1,6 +1,8 @@
 using CatalogProject;
 using Microsoft.EntityFrameworkCore;
 
+DotNetEnv.Env.Load();
+
 var  myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,8 +22,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
-
-DotNetEnv.Env.Load();
 
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
     ?? throw new InvalidOperationException("Connection string not found.");
