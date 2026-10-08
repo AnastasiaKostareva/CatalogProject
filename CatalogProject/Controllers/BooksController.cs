@@ -26,42 +26,47 @@ public class BooksController(ApplicationDbContext context, ILogger<BooksControll
     }
 
     [HttpPost]
-    public void PostBook([FromBody] Book book)
+    public ActionResult<Book> PostBook([FromBody] Book book)
     {
         logger.LogInformation("Posting book {id}", book.Id);
         context.Books.Add(book);
         context.SaveChanges();
+        return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
     }
 
     [HttpPut("{id:int}")]
-    public void PutBook(int id, [FromBody] Book book)
+    public ActionResult<Book> PutBook(int id, [FromBody] Book book)
     {
         if (id != book.Id)
         {
-            Response.StatusCode = StatusCodes.Status400BadRequest;
-            logger.LogInformation("Book with {id} not found", id);
-            return;
+            logger.LogWarning("Book update rejected: id mismatch. UrlId={UrlId}, BodyId={BodyId}", id, book.Id);
+            return BadRequest("Id in URL does not match Id in the body");
         }
 
         var existingBook = context.Books.Find(id);
+        if (existingBook is null)
+        {
+            logger.LogInformation("Book with {id} not found", id);
+            return NotFound();
+        }
+
+        logger.LogInformation("Updating book {id}", book.Id);
+        context.Entry(existingBook).CurrentValues.SetValues(book);
+        context.SaveChanges();
+        return NoContent();
+    }
+
+    [HttpDelete("{id:int}")]
+    public void DeleteBook(int id)
+    {var existingBook = context.Books.Find(id);
         if (existingBook is null)
         {
             Response.StatusCode = StatusCodes.Status404NotFound;
             logger.LogInformation("Book with {id} not found", id);
             return;
         }
-
-        logger.LogInformation("Updating book {id}", book.Id);
-        context.Entry(existingBook).CurrentValues.SetValues(book);
-        context.SaveChanges();
-        Response.StatusCode = StatusCodes.Status204NoContent;
-    }
-
-    [HttpDelete("{id:int}")]
-    public void DeleteBook(int id)
-    {
         logger.LogInformation("Deleting book {id}", id);
-        context.Books.Remove(context.Books.Find(id));
+        context.Books.Remove(existingBook);
         context.SaveChanges();
     }
 }
