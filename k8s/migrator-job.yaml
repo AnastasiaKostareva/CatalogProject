@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: catalog-migrator
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:16
+          command:
+            - sh
+            - -c
+            - until pg_isready -h postgres -p 5432 -U postgres; do echo "waiting for postgres..."; sleep 2; done
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: catalog-secrets
+                  key: POSTGRES_PASSWORD
+      containers:
+        - name: migrator
+          image: postgres:16
+          command:
+            - sh
+            - -c
+            - psql -h postgres -U postgres -d catalogappdb -v ON_ERROR_STOP=1 -f /migrations/migrate.sql
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: catalog-secrets
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: migrations
+              mountPath: /migrations
+              readOnly: true
+      volumes:
+        - name: migrations
+          configMap:
+            name: catalog-migrations
