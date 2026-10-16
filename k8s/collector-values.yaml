@@ -1,0 +1,15 @@
+remoteWrite:
+  - url: http://vls-victoria-logs-single-server:9428
+
+collector:
+  msgField:
+    - MessageTemplate
+    - message
+    - msg
+    - log
+
+  timeField:
+    - Timestamp
+    - time
+    - ts
+    - timestamp

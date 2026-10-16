@@ -1,0 +1,2 @@
+plugins:
+  - victoriametrics-logs-datasource
