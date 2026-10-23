@@ -1,0 +1,23 @@
+server:
+  scrape:
+    enabled: true
+  metric_relabel_configs:
+    - action: replace
+      source_labels: [ pod ]
+      regex: '(.+)'
+      target_label: pod_name
+      replacement: '${1}'
+    - action: replace
+      source_labels: [ container ]
+      regex: '(.+)'
+      target_label: container_name
+      replacement: '${1}'
+    - action: replace
+      target_label: name
+      replacement: k8s_stub
+    - action: replace
+      source_labels: [ id ]
+      regex: '^/system\.slice/(.+)\.service$'
+      target_label: systemd_service_name
+      replacement: '${1}'
+  

@@ -13,6 +13,9 @@ spec:
     - name: postgres
       port: 5432
       targetPort: 5432
+    - name: metrics
+      port: 9187
+      targetPort: 9187
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -63,6 +66,24 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
+        - name: postgres-exporter
+          image: quay.io/prometheuscommunity/postgres-exporter:v0.18.0
+          ports:
+            - name: metrics
+              containerPort: 9187
+          env:
+            - name: DATA_SOURCE_URI
+              value: "localhost:5432/postgres?sslmode=disable"
+            - name: DATA_SOURCE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: catalog-secrets
+                  key: EXPORTER_USER
+            - name: DATA_SOURCE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: catalog-secrets
+                  key: EXPORTER_PASSWORD
   volumeClaimTemplates:
     - metadata:
         name: data
