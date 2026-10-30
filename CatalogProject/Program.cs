@@ -54,6 +54,16 @@ builder.Services.AddLogging(loggingBuilder =>
 
 var app = builder.Build();
 
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(new { error = "Internal Server Error" });
+    });
+});
+
 app.UseCors(myAllowSpecificOrigins);
 
 app.UseHttpMetrics();

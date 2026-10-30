@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: loadtest-probe
+spec:
+  schedule: "* * * * *" #	Run every minute
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: loadtest-probe
+              image: busybox:latest
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "=== Начало генерации трафика ===";
+                  for i in 1 2 3 4 5; do
+                    wget -q -O /dev/null http://catalogbackend:8080/api/books;
+                    echo "Успешный GET /api/books";
+                  done;
+                  
+                  for i in 1 2 3 4 5; do
+                    wget -q -O /dev/null http://catalogbackend:8080/api/books/4;
+                    echo "Успешный GET /api/books/90";
+                  done;
+
+                  wget -q -O /dev/null http://catalogbackend:8080/api/books/9999;
+                  echo "Неуспешный GET /api/books/9999 (404)";
+                  
+                  for i in 1 2; do
+                    wget -q -O /dev/null --header="Content-Type: application/json" \
+                      --post-data='{"title":"Test Book","author":"Cron Tester","genre":"Testing","language":"English","rating":5}' \
+                      http://catalogbackend:8080/api/books;
+                    echo "Успешный POST /api/books";
+                  done;
+                  
+                  echo "=== Конец генерации трафика ===";
+          restartPolicy: OnFailure
