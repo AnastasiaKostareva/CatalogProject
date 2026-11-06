@@ -1,0 +1,62 @@
+server:
+  datasource:
+    url: "http://vms-victoria-metrics-single-server:8428"
+  config:
+    alerts:
+      groups:
+        - name: Catalog
+          rules:
+            - alert: LowSuccessfulViews
+              expr: sum(rate(microsoft_aspnetcore_hosting_http_server_request_duration_count{http_route="api/Books/{id:int}", http_response_status_code="200"}[5m]))
+                / sum(rate(microsoft_aspnetcore_hosting_http_server_request_duration_count{http_route="api/Books/{id:int}", http_response_status_code!="404"}[5m])) < 0.96
+              for: 5m
+              labels:
+                severity: warning
+              annotations:
+                summary: "Доля успешных просмотров книг упала ниже 96%"
+            - alert: HighTimeResponse
+              expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{endpoint="api/Books"}[5m])) by (le)) > 0.15
+              for: 5m
+              labels:
+                severity: warning
+              annotations:
+                summary: "Время ответа (p95) сервиса для получения списка книг превышает 150 мс"
+            - alert: LowSuccessAddBook
+              expr: sum(rate(http_requests_received_total{method="POST", endpoint="api/Books", code="201"}[5m])) / sum(rate(http_requests_received_total{method="POST", endpoint="api/Books"}[5m])) < 0.99
+              for: 5m
+              labels:
+                severity: warning
+              annotations:
+                summary: "Успешно добавленных книг меньше чем 99%"
+            - alert: DbNotAvailable
+              expr: (max(pg_up) by (app)) < 1
+              for: 2m
+              labels:
+                severity: critical
+              annotations:
+                summary: "База данных недоступна"
+            - alert: HighErrorRate500
+              expr: sum(rate(microsoft_aspnetcore_hosting_http_server_request_duration_count{http_response_status_code="500"}[5m])) > 0
+              labels:
+                severity: warning
+              annotations:
+                summary: "Появились необработанные исключения (ошибки 500)"
+            - alert: HighMemoryUse
+              expr: process_working_set_bytes > 471859200
+              for: 5m
+              labels:
+                severity: warning
+              annotations:
+                summary: "Потребление памяти процессом превышает 450 МБ"
+
+alertmanager:
+  enabled: true
+  config:
+    route:
+      receiver: 'dev_webhook'
+    receivers:
+      - name: 'dev_webhook'
+        webhook_configs:
+          - url: 'http://webhook.site/228c7fc8-1566-480e-bc5d-9b2f2b7a880e'
+            send_resolved: true
+  
