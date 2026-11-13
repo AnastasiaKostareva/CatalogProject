@@ -1,0 +1,13 @@
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: VictoriaMetrics
+        type: prometheus
+        access: proxy
+        url: http://vms-victoria-metrics-single-server.monitoring.svc.cluster.local:8428
+        isDefault: true
+        editable: true
+        env:
+          GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: "victoriametrics-logs-datasource"
+  

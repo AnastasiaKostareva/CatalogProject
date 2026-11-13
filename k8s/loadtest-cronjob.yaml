@@ -23,7 +23,7 @@ spec:
                   done;
                   
                   for i in 1 2 3 4 5; do
-                    wget -q -O /dev/null http://catalogbackend:8080/api/books/4;
+                    wget -q -O /dev/null http://catalogbackend:8080/api/books/90;
                     echo "Успешный GET /api/books/90";
                   done;
 
