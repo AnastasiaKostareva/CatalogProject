@@ -11,7 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "k8s", "k8s", "{46A2D61A-1DC6-46C7-9FAC-51DBB9E5B52C}"
 	ProjectSection(SolutionItems) = preProject
-		k8s\backend.yaml = k8s\backend.yaml
 		k8s\catalogbackend-config.yaml = k8s\catalogbackend-config.yaml
 		k8s\commands.txt = k8s\commands.txt
 		k8s\frontend.yaml = k8s\frontend.yaml
@@ -22,7 +21,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "k8s", "k8s", "{46A2D61A-1DC
 		k8s\loadtest-cronjob.yaml = k8s\loadtest-cronjob.yaml
 		k8s\vmalert-values.yaml = k8s\vmalert-values.yaml
 		k8s\grafana-values.yaml = k8s\grafana-values.yaml
+		k8s\gateway.yaml = k8s\gateway.yaml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployments", "deployments", "{EAA8A1BA-08FE-4C03-A252-B84F641F2463}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rolling", "rolling", "{96A1A0E7-FC43-4058-BCBF-9210A6DE2C9C}"
+	ProjectSection(SolutionItems) = preProject
+		k8s\httproute.yaml = k8s\httproute.yaml
+		k8s\backend.yaml = k8s\backend.yaml
+		k8s\catalogbackend-service.yaml = k8s\catalogbackend-service.yaml
+		k8s\backend-rolling-v2.yaml = k8s\backend-rolling-v2.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "blue-green", "blue-green", "{7B013B55-AF9C-4D0F-934C-0B2334B60570}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "canary", "canary", "{F5175159-10CE-4A14-B0B4-5D6CD7F1B93D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ab-testing", "ab-testing", "{A9D720D9-B739-478D-B98C-721A38672A2E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shadow", "shadow", "{18FBF2B2-6201-433C-9FCC-58D2FFA14D33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +54,11 @@ Global
 		{A7286752-F879-4E3F-A897-98FB8E842090}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{EAA8A1BA-08FE-4C03-A252-B84F641F2463} = {46A2D61A-1DC6-46C7-9FAC-51DBB9E5B52C}
+		{96A1A0E7-FC43-4058-BCBF-9210A6DE2C9C} = {EAA8A1BA-08FE-4C03-A252-B84F641F2463}
+		{7B013B55-AF9C-4D0F-934C-0B2334B60570} = {EAA8A1BA-08FE-4C03-A252-B84F641F2463}
+		{F5175159-10CE-4A14-B0B4-5D6CD7F1B93D} = {EAA8A1BA-08FE-4C03-A252-B84F641F2463}
+		{A9D720D9-B739-478D-B98C-721A38672A2E} = {EAA8A1BA-08FE-4C03-A252-B84F641F2463}
+		{18FBF2B2-6201-433C-9FCC-58D2FFA14D33} = {EAA8A1BA-08FE-4C03-A252-B84F641F2463}
 	EndGlobalSection
 EndGlobal

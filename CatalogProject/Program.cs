@@ -52,6 +52,14 @@ builder.Services.AddLogging(loggingBuilder =>
     loggingBuilder.AddDebug();
 });
 
+var podName = Environment.GetEnvironmentVariable("HOSTNAME") ?? "unknown";
+var appVersion = Environment.GetEnvironmentVariable("VERSION") ?? "v1.0.0";
+
+Prometheus.Metrics.CreateGauge("app_pod_info", "Pod name", new GaugeConfiguration
+{
+    LabelNames = new[] { "pod", "version" }
+}).WithLabels(podName, appVersion).Set(1);
+
 var app = builder.Build();
 
 app.UseExceptionHandler(errorApp =>
@@ -75,6 +83,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGet("/health", () => Results.Ok("Healthy"));
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Pod-Name", podName);
+    context.Response.Headers.Append("X-Version", appVersion);
+    await next();
+});
 
 app.MapControllers();
 

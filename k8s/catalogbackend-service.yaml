@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogbackend
+spec:
+  selector:
+    app: catalogbackend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+  
