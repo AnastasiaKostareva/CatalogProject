@@ -36,11 +36,12 @@ server:
               annotations:
                 summary: "База данных недоступна"
             - alert: HighErrorRate500
-              expr: sum(rate(microsoft_aspnetcore_hosting_http_server_request_duration_count{http_response_status_code="500"}[5m])) > 0
+              expr: (sum(rate(microsoft_aspnetcore_hosting_http_server_request_duration_count{http_response_status_code=~"5.."}[5m]))
+                / sum(rate(microsoft_aspnetcore_hosting_http_server_request_duration_count[5m]))) * 100 > 1
               labels:
-                severity: warning
+                severity: critical
               annotations:
-                summary: "Появились необработанные исключения (ошибки 500)"
+                summary: "Доля 500 ошибок превышает 1% от общего трафика"
             - alert: HighMemoryUse
               expr: process_working_set_bytes > 471859200
               for: 5m

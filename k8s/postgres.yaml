@@ -72,12 +72,14 @@ spec:
               mountPath: /var/lib/postgresql/data
         - name: postgres-exporter
           image: quay.io/prometheuscommunity/postgres-exporter:v0.18.0
+          args:
+            - "--collector.stat_user_tables"
           ports:
             - name: metrics
               containerPort: 9187
           env:
             - name: DATA_SOURCE_URI
-              value: "localhost:5432/postgres?sslmode=disable"
+              value: "localhost:5432/catalogappdb?sslmode=disable"
             - name: DATA_SOURCE_USER
               valueFrom:
                 secretKeyRef:

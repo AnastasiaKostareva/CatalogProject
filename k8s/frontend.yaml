@@ -13,6 +13,10 @@ spec:
     metadata:
       labels:
         app: catalogfrontend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9113"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: frontend
@@ -39,6 +43,19 @@ spec:
               port: http
             initialDelaySeconds: 10
             periodSeconds: 10
+        - name: nginx-exporter
+          image: nginx/nginx-prometheus-exporter:1.5.1
+          args:
+            - "--nginx.scrape-uri=http://localhost/status"
+          ports:
+            - name: metrics
+              containerPort: 9113
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
 ---
 apiVersion: v1
 kind: Service
