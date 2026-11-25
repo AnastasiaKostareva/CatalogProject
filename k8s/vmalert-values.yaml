@@ -22,7 +22,7 @@ server:
               annotations:
                 summary: "Время ответа (p95) сервиса для получения списка книг превышает 150 мс"
             - alert: LowSuccessAddBook
-              expr: sum(rate(http_requests_received_total{method="POST", endpoint="api/Books", code="201"}[5m])) / sum(rate(http_requests_received_total{method="POST", endpoint="api/Books"}[5m])) < 0.99
+              expr: (sum(rate(publish_processed_total[5m])) / sum(increase(http_requests_received_total{method="POST", endpoint="api/Books"}[5m]))) < 0.99
               for: 5m
               labels:
                 severity: warning

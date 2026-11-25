@@ -4,8 +4,11 @@ namespace CatalogProject.Metrics;
 
 public class BookMetrics
 {
-    private static readonly Gauge PublishedBooksGauge = Prometheus.Metrics
-        .CreateGauge("publish_processed_current", "Current number of published books");
+    private static readonly Counter PublishedBooksGauge = Prometheus.Metrics
+        .CreateCounter("publish_processed_total", "Current number of published books", new CounterConfiguration
+        {
+            LabelNames = new[] { "genre" }
+        });
 
     private static readonly Counter ViewBookCounter = Prometheus.Metrics
         .CreateCounter("view_books_total", "Count of viewed books", new CounterConfiguration
@@ -22,11 +25,6 @@ public class BookMetrics
     public static void RecordBook()
     {
         PublishedBooksGauge.Inc();
-    }
-    
-    public static void DeleteBook()
-    {
-        PublishedBooksGauge.Dec();
     }
 
     public static void ViewBook(string? genre)

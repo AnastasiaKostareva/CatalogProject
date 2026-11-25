@@ -78,6 +78,5 @@ public class BooksController(ApplicationDbContext context, ILogger<BooksControll
         logger.LogInformation("Deleting book {id}", id);
         context.Books.Remove(existingBook);
         context.SaveChanges();
-        BookMetrics.DeleteBook();
     }
 }
